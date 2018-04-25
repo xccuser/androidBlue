@@ -11,7 +11,13 @@ public class Constant {
 
     public static final int IED =2;
 
+    public static String ip;
 
+    public static String getIp() {
+        return ip;
+    }
 
-
+    public static void setIp(String ip) {
+        Constant.ip = ip;
+    }
 }

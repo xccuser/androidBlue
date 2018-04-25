@@ -24,5 +24,11 @@
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
     <string name="animation_1_instructions">Please enter your password:</string>
     <string name="googlelogin_login">Login</string>
-
+    <string-array name="languages">
+        <item>查询</item>
+        <item>读</item>
+        <item>写</item>
+        <item>上传</item>
+    </string-array>
+    <string name="title_activity_show_view">ShowView</string>
 </resources>

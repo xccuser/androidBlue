@@ -10,11 +10,20 @@
         android:layout_width="match_parent"
         android:layout_weight="1"
         >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <Spinner
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/spinenr"
+            android:entries="@array/languages"/>
         <ListView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:id="@+id/viewshow"/>
-
+</LinearLayout>
 
 
     </LinearLayout>

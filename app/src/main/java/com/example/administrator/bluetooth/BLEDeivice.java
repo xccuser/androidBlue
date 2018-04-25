@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 
 import com.example.administrator.blueservice.BLEService;
+import com.example.administrator.thread.BlueAdapterGet;
+import com.example.administrator.thread.ThreadBluetooth;
 
 import java.util.Set;
 
@@ -72,8 +74,23 @@ public class BLEDeivice extends Activity implements View.OnClickListener {
                 startService(ite);*/
                 Intent ite = new Intent(BLEDeivice.this, MainActivity.class);
                 String str=(String)adapterView.getAdapter().getItem(i);
-                String[] s2=str.split("\n");
+                final String[] s2=str.split("\n");
                 ite.putExtra("select", s2[1]);
+                   new Thread(new Runnable() {
+                       @Override
+                       public void run() {
+                           try {
+                               ThreadBluetooth.getThis(BlueAdapterGet.getmBluetoothAdapter().getRemoteDevice(s2[1]));
+                           } catch (InterruptedException e) {
+                               e.printStackTrace();
+                           }
+                       }
+                   }).start();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 setResult(2,ite);
                 finish();
             }
@@ -181,9 +198,6 @@ public class BLEDeivice extends Activity implements View.OnClickListener {
             default:
                 Toast.makeText(getApplication(),"butoon",Toast.LENGTH_SHORT).show();
                 break;
-
         }
-
-
     }
 }

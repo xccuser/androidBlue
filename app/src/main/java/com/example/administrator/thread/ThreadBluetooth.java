@@ -3,8 +3,10 @@ package com.example.administrator.thread;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.widget.Toast;
 
 import com.example.administrator.blueservice.BLEService;
 
@@ -26,25 +28,69 @@ public class ThreadBluetooth {
     byte[] buffer = new byte[40];
     Handler handler;
     ConnectedThread startWrite=null;
+    static ThreadBluetooth bule=null;
+    static BluetoothDevice device1;
+
+    public static ThreadBluetooth getThis(BluetoothDevice device) throws InterruptedException {
+        device1=device;
+        if(bule==null){
+            bule=new ThreadBluetooth(device);
+        }
+        return bule;
+    }
+
+
+
+
+
+
+
+
     public ThreadBluetooth(BluetoothDevice device,Handler handler) throws InterruptedException {
         this.handler=handler;
         new ConnectThread(device).start();
-       // Thread.currentThread().sleep(1000);
+        // Thread.currentThread().sleep(1000);
         startWrite=new ConnectedThread(mmSocket);
         startWrite.start();
     }
+    public ThreadBluetooth(BluetoothDevice device) throws InterruptedException {
+        new ConnectThread(device).start();
+        // Thread.currentThread().sleep(1000);
+      //  startWrite=new ConnectedThread(mmSocket);
+       // startWrite.start();
+    }
 
-    public void sendBlueCommand(String args){
+
+
+
+
+
+/*
+* 输入16进制要有空格
+*
+* */
+    byte[] sendbyte;
+    public void sendBlueCommand(String args,Context context) throws InterruptedException {
         String arg[]=args.split(" ");
-        byte[] sendbyte=new byte[3];
+        sendbyte=new byte[arg.length];
         for(int i=0;i<arg.length;i++){
             sendbyte[i]= (byte) sToh(arg[i]);
         }
-        startWrite.write(sendbyte);
+        //new ConnectThread(device1).start();
+        //Thread.currentThread().sleep(1000);
+        if(mmSocket==null){
+            Toast.makeText(context,"连接蓝牙",Toast.LENGTH_SHORT).show();
+        }else{
+            //new ConnectThread(device1).start();
+            new ConnectedThread(mmSocket).start();
+        }
+
+        //startWrite.run();
+
     }
 
     public int sToh(String args) {
-       return Integer.parseInt(args) / 10 * 16 + Integer.parseInt(args) % 10;
+        return Integer.parseInt(args) / 10 * 16 + Integer.parseInt(args) % 10;
     }
 
     private class ConnectThread extends Thread {
@@ -70,7 +116,7 @@ public class ThreadBluetooth {
                 // Connect the device through the socket. This will block
                 // until it succeeds or throws an exception
                 mmSocket.connect();
-                new ConnectedThread(mmSocket).start();
+            //    new ConnectedThread(mmSocket).start();
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and get out
                 try {
@@ -106,34 +152,55 @@ public class ThreadBluetooth {
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
         }
+
+
         public void run() {
-            boolean flag=true;
-             // buffer store for the stream
-            byte[] bufferwrite = new byte[3];
-            int bytes; // bytes returned from read()
+            boolean flag=false;
+            // buffer store for the stream
+
+            int bytes=0; // bytes returned from read()
+            write(sendbyte);
+            try {
+                Thread.currentThread().sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             // Keep listening to the InputStream until an exception occurs
             while (true) {
+               // write(sendbyte);
                 try {
-                    /*if(flag){
-                        bufferwrite[0]=0x43;
-                        bufferwrite[1]=0x03;
-                        bufferwrite[2]=0x01;
-                        write(bufferwrite);
-                        flag=false;
-                    }*/
-                    bytes = mmInStream.read(buffer);
-                    if(buffer[0]!=0) {
-//                        for (int i : buffer)
-//                            System.out.println(": "+Integer.toHexString(i & 0xFF));
 
-                    }
-                 //   Message message=Message.obtain();
-                   handler.obtainMessage(IED, bytes, -1, buffer)
-                            .sendToTarget();
+                       bytes = mmInStream.read(buffer);
+                       if(bytes==0){
+                       }else{
+                           handler.obtainMessage(IED, bytes, -1, buffer)
+                                   .sendToTarget();
+                         //  mmInStream.read(buffer);
+                           /*for(int i=0;i<buffer.length;i++)
+                               buffer[i]=0;*/
+                           mmInStream.reset();
+                         //  startWrite.stop();
+                       }
+                    //    Thread.currentThread().stop();
+                  //  for(;(bytes=mmInStream.read())!=-1;)
+                   // mmInStream.close();
+
+
+
+
+                    Thread.currentThread().interrupt();
+                    break;
+
+
+
+                    //   Message message=Message.obtain();
+
                     // Send the obtained bytes to the UI activity
 
                 } catch (IOException e) {
                     break;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -153,11 +220,7 @@ public class ThreadBluetooth {
     }
 
 
-
-
-
-
-
-
-
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
 }
