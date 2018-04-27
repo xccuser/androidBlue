@@ -118,9 +118,6 @@ public class MainActivity extends AppCompatActivity {
                         mListView.setAdapter(mAdapter);
 
 
-
-
-
                         break;
                     }
                     mAdapter.add(str);
@@ -228,11 +225,7 @@ public class MainActivity extends AppCompatActivity {
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-
                                     //Toast.makeText(MainActivity.this,mEditText.getText().toString(),Toast.LENGTH_SHORT).show();
-
-
-
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -245,8 +238,6 @@ public class MainActivity extends AppCompatActivity {
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
-
-
                                         }
                                     }).start();
 
