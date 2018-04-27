@@ -136,5 +136,10 @@ public class HttpRequest {
 		return sr;
 	}
 
-
+	public static String hell1(String str,String ip) throws Exception {
+		//String srt= new String(str.getBytes(),"utf-8");
+		String sr=HttpRequest.sendPost("http://"+ip+":8080/Springtes/download",str);
+		System.out.println(sr);
+		return sr;
+	}
 }

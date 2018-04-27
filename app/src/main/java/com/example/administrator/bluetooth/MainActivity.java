@@ -132,6 +132,43 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private Handler httphandler=new Handler()
+    {
+        public void handleMessage(Message msg)
+        {
+            if(msg.what==0)
+            {
+                //msg.obj是获取handler发送信息传来的数据
+                @SuppressWarnings("unchecked")
+                String stri= (String) msg.obj;
+                //给ListView绑定数据
+                mAdapter.clear();
+                mAdapter.add(stri);
+                mListView.setAdapter(mAdapter);
+            }
+        }
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     @Override
@@ -184,7 +221,48 @@ public class MainActivity extends AppCompatActivity {
                         if(flag){
                             new AlertDlog(MainActivity.this).show();
                             flag =!flag;
+
+
+
                         }
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    //Toast.makeText(MainActivity.this,mEditText.getText().toString(),Toast.LENGTH_SHORT).show();
+
+
+
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            try {
+                                                String rs=HttpRequest.hell1(mEditText.getText().toString(),Constant.ip);
+
+                                              //  String srt= new String(rs.getBytes("ISO8859-1"),"utf-8");
+                                                httphandler.sendMessage(handler.obtainMessage(0, rs));
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+
+
+                                        }
+                                    }).start();
+
+
+                                }
+                            });
+
+
+
+
+
+
+
+
+
+
 
 
 
